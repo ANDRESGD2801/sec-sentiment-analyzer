@@ -210,7 +210,18 @@ def instruct_sentiment(text: str) -> tuple[str, str]:
 def on_upload(file):
     if file is None:
         return "", gr.update(choices=["Full Document"], value="Full Document"), "", ""
-    text     = parse_file(file.name)
+    # Gradio 5+ delivers a filepath string; older versions gave an object with .name
+    path = file if isinstance(file, str) else file.name
+    try:
+        text = parse_file(path)
+    except Exception as e:
+        err = f"Error reading file: {e}"
+        return "", gr.update(choices=["Full Document"], value="Full Document"), err, err
+
+    if not text.strip():
+        msg = "The file appears to be empty or could not be parsed."
+        return "", gr.update(choices=["Full Document"], value="Full Document"), msg, msg
+
     sections = detect_sections(text)
     n_words  = len(text.split())
     n_chars  = len(text)
