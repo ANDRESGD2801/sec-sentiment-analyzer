@@ -1,0 +1,9 @@
+venv/
+__pycache__/
+*.pyc
+.env
+*.pdf
+*.htm
+*.html
+# Hugging Face cache (weights stay local, not en el repo)
+~/.cache/huggingface/

@@ -1,0 +1,5 @@
+gradio>=4.0
+transformers>=4.40
+torch>=2.1
+PyMuPDF>=1.23        # PDF parsing (imported as fitz)
+accelerate>=0.27     # optional but speeds up model loading
