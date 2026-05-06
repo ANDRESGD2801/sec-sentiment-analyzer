@@ -3,7 +3,7 @@ __pycache__/
 *.pyc
 .env
 *.pdf
-*.htm
-*.html
+uploads/*.htm
+uploads/*.html
 # Hugging Face cache (weights stay local, not en el repo)
 ~/.cache/huggingface/
