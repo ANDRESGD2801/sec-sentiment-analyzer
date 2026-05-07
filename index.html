@@ -1,270 +1,503 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SEC Sentiment Analyzer — Proyecto</title>
-  <style>
-    :root {
-      --purple: #6366f1;
-      --purple-dark: #4f46e5;
-      --text: #1e293b;
-      --muted: #64748b;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f8fafc; color: var(--text); }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SEC Sentiment Analyzer</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --surface2: #273344;
+            --border: #334155;
+            --text: #f1f5f9;
+            --muted: #94a3b8;
+            --green: #22c55e;
+            --red: #ef4444;
+            --amber: #f59e0b;
+            --radius: 12px;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-    header {
-      background: linear-gradient(135deg, var(--purple-dark) 0%, #818cf8 100%);
-      color: white;
-      padding: 72px 24px 56px;
-      text-align: center;
-    }
-    header h1 { font-size: 2.6rem; font-weight: 800; margin-bottom: 12px; }
-    header p  { font-size: 1.1rem; opacity: .9; max-width: 520px; margin: 0 auto 32px; line-height: 1.6; }
+        /* Header */
+        header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 2rem;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+        }
+        .logo {
+            width: 42px; height: 42px;
+            background: var(--primary);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; flex-shrink: 0;
+        }
+        .header-text h1 { font-size: 1.1rem; font-weight: 700; }
+        .header-text p  { font-size: 0.75rem; color: var(--muted); }
+        #conn-badge {
+            margin-left: auto;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            background: #1c1c0f; color: var(--amber); border: 1px solid #78350f;
+            white-space: nowrap;
+        }
+        #conn-badge.ok    { background: #0f2e1a; color: var(--green); border-color: #166534; }
+        #conn-badge.error { background: #2e0f0f; color: var(--red);   border-color: #7f1d1d; }
 
-    .badge {
-      display: inline-block;
-      background: rgba(255,255,255,.2);
-      border: 1px solid rgba(255,255,255,.35);
-      border-radius: 999px;
-      padding: 6px 18px;
-      font-size: .82rem;
-      margin: 4px;
-    }
+        /* Layout */
+        main {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 1.25rem;
+            padding: 1.5rem 2rem;
+            max-width: 1300px;
+            width: 100%;
+            margin: 0 auto;
+            align-items: start;
+        }
 
-    /* ── Warning banner ── */
-    .banner {
-      background: #fefce8;
-      border: 2px solid #fbbf24;
-      border-radius: 12px;
-      padding: 20px 28px;
-      max-width: 700px;
-      margin: 40px auto 0;
-      font-size: .97rem;
-      line-height: 1.6;
-    }
-    .banner strong { color: #92400e; }
-    .banner code {
-      background: #fef3c7;
-      border-radius: 4px;
-      padding: 2px 7px;
-      font-family: monospace;
-      font-size: .9em;
-    }
+        /* Card */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+        }
+        .card-title {
+            font-size: 0.72rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.1em;
+            color: var(--muted); margin-bottom: 1rem;
+        }
 
-    main { max-width: 860px; margin: 0 auto; padding: 56px 24px; }
+        /* Drop zone */
+        #drop-zone {
+            border: 2px dashed var(--border);
+            border-radius: 10px;
+            padding: 1.75rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color .2s, background .2s;
+            color: var(--muted); font-size: 0.85rem;
+        }
+        #drop-zone:hover, #drop-zone.drag {
+            border-color: var(--primary);
+            background: rgba(99,102,241,.07);
+        }
+        #drop-zone .icon { font-size: 2rem; display: block; margin-bottom: .5rem; }
+        #drop-zone .hint { font-size: 0.72rem; color: #64748b; margin-top: .25rem; }
+        #drop-zone input { display: none; }
+        #file-info { margin-top: .6rem; font-size: 0.78rem; min-height: 1.2em; color: var(--green); }
 
-    .section-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 6px; }
-    .section-sub   { color: var(--muted); margin-bottom: 28px; font-size: .97rem; }
+        /* Select */
+        .field-label { font-size: 0.78rem; color: var(--muted); margin: 1.1rem 0 .4rem; display: block; }
+        select#section-dd {
+            width: 100%;
+            background: var(--surface2);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 9px 12px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+        }
+        select#section-dd:focus { outline: none; border-color: var(--primary); }
+        select#section-dd:disabled { opacity: 0.45; cursor: not-allowed; }
 
-    /* cards */
-    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 52px; }
-    .card  { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,.07); }
-    .card-icon { font-size: 2rem; margin-bottom: 10px; }
-    .card h3   { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
-    .card p    { font-size: .87rem; color: var(--muted); line-height: 1.6; }
+        /* Button */
+        #analyze-btn {
+            width: 100%; margin-top: 1rem; padding: 11px;
+            background: var(--primary); color: #fff;
+            border: none; border-radius: 8px;
+            font-size: 0.9rem; font-weight: 600; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: .5rem;
+            transition: background .2s, opacity .2s;
+        }
+        #analyze-btn:hover:not(:disabled) { background: var(--primary-hover); }
+        #analyze-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+        .note { font-size: 0.7rem; color: #475569; margin-top: .75rem; line-height: 1.5; }
 
-    /* screenshot */
-    .screen-wrap {
-      background: white;
-      border-radius: 14px;
-      box-shadow: 0 8px 40px rgba(0,0,0,.1);
-      overflow: hidden;
-      margin-bottom: 52px;
-    }
-    .screen-bar {
-      background: #e2e8f0;
-      padding: 10px 16px;
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-    .dot { width: 12px; height: 12px; border-radius: 50%; }
-    .dot.r{background:#f87171;} .dot.y{background:#fbbf24;} .dot.g{background:#4ade80;}
-    .screen-url {
-      background: white; border-radius: 6px; padding: 3px 14px;
-      font-size: .8rem; color: var(--muted); flex: 1;
-    }
-    .screen-body { padding: 32px; background: #f8fafc; }
-    .screen-label {
-      font-size: .75rem; font-weight: 700; color: var(--muted);
-      text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px;
-    }
-    .screen-row { display: grid; grid-template-columns: 1fr 1.6fr; gap: 20px; }
-    .screen-panel { background: white; border-radius: 10px; padding: 18px; }
+        /* Spinner */
+        .spinner {
+            width: 14px; height: 14px;
+            border: 2px solid rgba(255,255,255,.35);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
+            flex-shrink: 0;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-    .file-box {
-      border: 2px dashed #cbd5e1; border-radius: 8px;
-      padding: 28px 12px; text-align: center;
-      font-size: .85rem; color: var(--muted); margin-bottom: 12px;
-    }
-    .file-box span { font-size: 1.8rem; display: block; margin-bottom: 6px; }
-    .fake-select {
-      width: 100%; padding: 8px 10px;
-      border: 1px solid #cbd5e1; border-radius: 6px;
-      font-size: .85rem; background: white; margin-bottom: 12px;
-    }
-    .fake-btn {
-      width: 100%; background: var(--purple); color: white;
-      border: none; border-radius: 8px; padding: 10px;
-      font-size: .93rem; font-weight: 700;
-    }
+        /* Preview */
+        #preview-box {
+            background: var(--surface2);
+            border-radius: 8px; padding: 1rem;
+            font-family: "SFMono-Regular", Consolas, monospace;
+            font-size: 0.74rem; line-height: 1.65;
+            color: var(--muted);
+            height: 220px; overflow-y: auto;
+            white-space: pre-wrap; word-break: break-word;
+            margin-bottom: 1.25rem;
+        }
 
-    .result-box {
-      background: white; border-left: 4px solid var(--purple);
-      border-radius: 6px; padding: 12px; font-size: .85rem;
-      line-height: 1.5; margin-bottom: 14px;
-    }
-    .bar-label { display: flex; justify-content: space-between; font-size: .8rem; margin-bottom: 4px; }
-    .bar-track { background: #e2e8f0; border-radius: 999px; height: 9px; margin-bottom: 10px; overflow: hidden; }
-    .bar-fill  { height: 100%; border-radius: 999px; }
-    .bar-fill.neg{background:#ef4444;} .bar-fill.neu{background:#f59e0b;} .bar-fill.pos{background:#22c55e;}
+        /* Results */
+        #results { display: none; }
+        #summary {
+            background: rgba(99,102,241,.08);
+            border-left: 3px solid var(--primary);
+            border-radius: 8px; padding: 1rem 1.25rem;
+            font-size: 0.88rem; line-height: 1.6;
+            margin-bottom: 1.25rem;
+        }
+        .results-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+        }
+        .method-card {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px; padding: 1rem;
+        }
+        .method-card h3 {
+            font-size: 0.72rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.08em;
+            color: var(--muted); margin-bottom: .75rem;
+        }
+        #instruct-response { font-size: 0.85rem; line-height: 1.7; white-space: pre-wrap; }
 
-    /* code */
-    .code-wrap  { background: #1e293b; border-radius: 12px; overflow: hidden; margin-bottom: 52px; }
-    .code-hdr   { background: #334155; padding: 10px 20px; font-size: .8rem; color: #94a3b8; }
-    .code-hdr span { background: #475569; border-radius: 4px; padding: 2px 8px; }
-    pre { padding: 24px; color: #e2e8f0; font-family: 'Cascadia Code','Fira Code',monospace; font-size: .87rem; line-height: 1.8; overflow-x: auto; }
-    .cg{color:#4ade80;} .cb{color:#60a5fa;} .cm{color:#64748b;} .cy{color:#fbbf24;}
+        /* Probability bars */
+        .prob-item { margin-bottom: .85rem; }
+        .prob-item:last-child { margin-bottom: 0; }
+        .prob-header { display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: .3rem; }
+        .prob-pct { font-weight: 700; }
+        .prob-track { height: 10px; background: var(--border); border-radius: 99px; overflow: hidden; }
+        .prob-fill { height: 100%; border-radius: 99px; transition: width .5s cubic-bezier(.4,0,.2,1); }
+        .fill-Positive { background: var(--green); }
+        .fill-Negative { background: var(--red); }
+        .fill-Neutral  { background: var(--amber); }
 
-    /* github btn */
-    .gh-wrap { text-align: center; margin-bottom: 52px; }
-    .gh-btn {
-      display: inline-flex; align-items: center; gap: 10px;
-      background: #1e293b; color: white; text-decoration: none;
-      border-radius: 10px; padding: 14px 28px;
-      font-weight: 700; font-size: 1rem; transition: background .2s;
-    }
-    .gh-btn:hover { background: #334155; }
-    .gh-btn svg { width: 22px; height: 22px; fill: white; }
-
-    footer { text-align: center; padding: 28px; font-size: .82rem; color: var(--muted); border-top: 1px solid #e2e8f0; }
-
-    @media(max-width:600px){ .screen-row{ grid-template-columns:1fr; } header h1{ font-size:1.8rem; } }
-  </style>
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+    </style>
 </head>
 <body>
 
 <header>
-  <h1>SEC Filing Sentiment Analyzer</h1>
-  <p>Analiza el sentimiento de reportes de la SEC con un LLM que corre 100% en local — sin APIs externas, sin costos.</p>
-  <span class="badge">Qwen2-0.5B-Instruct</span>
-  <span class="badge">Gradio UI</span>
-  <span class="badge">100% local</span>
-  <span class="badge">PDF / TXT / HTM</span>
+    <div class="logo">📊</div>
+    <div class="header-text">
+        <h1>SEC Sentiment Analyzer</h1>
+        <p>Qwen2-0.5B-Instruct &nbsp;·&nbsp; 100 % local &nbsp;·&nbsp; Dos métodos de análisis</p>
+    </div>
+    <span id="conn-badge">Conectando…</span>
 </header>
 
-<!-- Warning -->
-<div style="padding: 0 24px;">
-  <div class="banner">
-    ⚠️ <strong>Esta es la página de presentación del proyecto (GitHub Pages) — no es la app real.</strong><br>
-    Para usar la app funcional, clona el repositorio y ejecuta <code>python app.py</code> en tu terminal.
-    La app abre automáticamente en <code>http://127.0.0.1:7860</code>.
-  </div>
-</div>
-
 <main>
-
-  <!-- Preview labeled as mockup -->
-  <div style="margin-top: 8px;">
-    <div class="section-title">Vista previa (mockup)</div>
-    <div class="section-sub">Así se ve la interfaz al correrla localmente con <code>python app.py</code>. Los botones de abajo son decorativos.</div>
-  </div>
-
-  <div class="screen-wrap">
-    <div class="screen-bar">
-      <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
-      <div class="screen-url">http://127.0.0.1:7860 &nbsp;— &nbsp;Gradio app (solo corre localmente con Python)</div>
-    </div>
-    <div class="screen-body">
-      <div class="screen-row">
-        <div class="screen-panel">
-          <div class="screen-label">Upload SEC Filing</div>
-          <div class="file-box"><span>📄</span>Drop PDF / TXT / HTM<br>or click to upload</div>
-          <div class="screen-label">Section to analyze</div>
-          <select class="fake-select" disabled>
-            <option>Item 1A – Risk Factors</option>
-          </select>
-          <button class="fake-btn" disabled>Analyze Sentiment</button>
+    <!-- Panel izquierdo -->
+    <div class="card">
+        <p class="card-title">1 — Archivo SEC</p>
+        <div id="drop-zone" role="button" tabindex="0"
+             onclick="document.getElementById('file-input').click()"
+             onkeydown="if(event.key==='Enter')document.getElementById('file-input').click()">
+            <input type="file" id="file-input" accept=".pdf,.txt,.htm,.html" />
+            <span class="icon">📄</span>
+            <span>Arrastra o haz clic para subir</span>
+            <span class="hint">PDF · TXT · HTM · HTML</span>
         </div>
-        <div class="screen-panel">
-          <div class="screen-label">Instruct Model result</div>
-          <div class="result-box">
-            Sentiment: <strong>Negative</strong><br>
-            Reason: The risk factors section highlights multiple uncertainties including supply chain disruptions and declining margins.
-          </div>
-          <div class="screen-label">Logit-based Confidence</div>
-          <div class="bar-label"><span>Negative</span><span>61.4%</span></div>
-          <div class="bar-track"><div class="bar-fill neg" style="width:61.4%"></div></div>
-          <div class="bar-label"><span>Neutral</span><span>27.8%</span></div>
-          <div class="bar-track"><div class="bar-fill neu" style="width:27.8%"></div></div>
-          <div class="bar-label"><span>Positive</span><span>10.8%</span></div>
-          <div class="bar-track"><div class="bar-fill pos" style="width:10.8%"></div></div>
+        <div id="file-info"></div>
+
+        <label class="field-label" for="section-dd">2 — Sección a analizar</label>
+        <select id="section-dd" disabled>
+            <option value="Full Document">Full Document</option>
+        </select>
+
+        <button id="analyze-btn" disabled>Analizar Sentimiento</button>
+        <p class="note">
+            ℹ️ Primera ejecución descarga ~1 GB del modelo (solo una vez).<br>
+            El análisis puede tardar 1–3 minutos.
+        </p>
+    </div>
+
+    <!-- Panel derecho -->
+    <div class="card">
+        <p class="card-title">Vista previa del documento / sección</p>
+        <div id="preview-box">Sube un archivo para ver su contenido aquí.</div>
+
+        <div id="results">
+            <div id="summary"></div>
+            <div class="results-row">
+                <div class="method-card">
+                    <h3>Método Instruct</h3>
+                    <div id="instruct-response"></div>
+                </div>
+                <div class="method-card">
+                    <h3>Método Logit — probabilidades</h3>
+                    <div>
+                        <div class="prob-item">
+                            <div class="prob-header"><span>Positive</span><span class="prob-pct" id="pct-Positive">—</span></div>
+                            <div class="prob-track"><div class="prob-fill fill-Positive" id="fill-Positive" style="width:0%"></div></div>
+                        </div>
+                        <div class="prob-item">
+                            <div class="prob-header"><span>Negative</span><span class="prob-pct" id="pct-Negative">—</span></div>
+                            <div class="prob-track"><div class="prob-fill fill-Negative" id="fill-Negative" style="width:0%"></div></div>
+                        </div>
+                        <div class="prob-item">
+                            <div class="prob-header"><span>Neutral</span><span class="prob-pct" id="pct-Neutral">—</span></div>
+                            <div class="prob-track"><div class="prob-fill fill-Neutral" id="fill-Neutral" style="width:0%"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
-
-  <!-- Features -->
-  <div class="section-title">Cómo funciona</div>
-  <div class="section-sub">Dos métodos complementarios para analizar el sentimiento financiero.</div>
-
-  <div class="cards">
-    <div class="card">
-      <div class="card-icon">📂</div>
-      <h3>Parseo de archivos</h3>
-      <p>Soporta PDF (PyMuPDF), TXT y HTML. Detecta secciones 10-K/10-Q: Item 1, 1A, 7, 7A, 8, etc.</p>
-    </div>
-    <div class="card">
-      <div class="card-icon">📊</div>
-      <h3>Logit-based</h3>
-      <p>Compara logits del siguiente token para "positive", "negative" y "neutral". Analiza por chunks y promedia scores.</p>
-    </div>
-    <div class="card">
-      <div class="card-icon">🤖</div>
-      <h3>Instruct model</h3>
-      <p>Usa el chat template de Qwen2-Instruct con un prompt de analista financiero. Devuelve etiqueta + explicación.</p>
-    </div>
-    <div class="card">
-      <div class="card-icon">🔒</div>
-      <h3>100% local</h3>
-      <p>El modelo corre en tu máquina. Los pesos se descargan una vez desde Hugging Face (~1 GB).</p>
-    </div>
-  </div>
-
-  <!-- Install -->
-  <div class="section-title">Instalación</div>
-  <div class="section-sub">Requiere Python 3.10+ y ~1 GB de espacio en disco.</div>
-
-  <div class="code-wrap">
-    <div class="code-hdr"><span>Terminal</span></div>
-    <pre><span class="cm"># 1. Clona el repo</span>
-<span class="cg">git</span> clone https://github.com/ANDRESGD2801/sec-sentiment-analyzer
-<span class="cg">cd</span> sec-sentiment-analyzer
-
-<span class="cm"># 2. Entorno virtual + dependencias</span>
-<span class="cg">python</span> -m venv venv
-<span class="cb">venv\Scripts\activate</span>       <span class="cm"># Windows</span>
-<span class="cb">source venv/bin/activate</span>    <span class="cm"># Mac / Linux</span>
-<span class="cg">pip</span> install -r requirements.txt
-
-<span class="cm"># 3. Lanza la app → abre http://127.0.0.1:7860</span>
-<span class="cg">python</span> app.py</pre>
-  </div>
-
-  <div class="gh-wrap">
-    <a class="gh-btn" href="https://github.com/ANDRESGD2801/sec-sentiment-analyzer" target="_blank">
-      <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-      Ver código en GitHub
-    </a>
-  </div>
-
 </main>
 
-<footer>
-  Proyecto — AI Impacto Empresarial · Qwen2-0.5B-Instruct · Gradio · PyMuPDF
-</footer>
+<script>
+(function () {
+    "use strict";
 
+    var API = "http://127.0.0.1:7860";
+
+    var badge       = document.getElementById("conn-badge");
+    var fileInput   = document.getElementById("file-input");
+    var fileInfo    = document.getElementById("file-info");
+    var dropZone    = document.getElementById("drop-zone");
+    var sectionDd   = document.getElementById("section-dd");
+    var analyzeBtn  = document.getElementById("analyze-btn");
+    var previewBox  = document.getElementById("preview-box");
+    var resultsDiv  = document.getElementById("results");
+    var summaryDiv  = document.getElementById("summary");
+    var instructDiv = document.getElementById("instruct-response");
+
+    var docState = "";
+
+    /* ── Helpers ─────────────────────────────── */
+    function setBadge(text, cls) {
+        badge.textContent = text;
+        badge.className = cls || "";
+    }
+
+    function setBtn(loading, label) {
+        label = label || "Analizar Sentimiento";
+        analyzeBtn.disabled = loading;
+        if (loading) {
+            analyzeBtn.innerHTML = '<span class="spinner"></span>' + label;
+        } else {
+            analyzeBtn.textContent = label;
+        }
+    }
+
+    function renderMd(text) {
+        return text
+            .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+            .replace(/\*(.*?)\*/g, "<em>$1</em>")
+            .replace(/\n/g, "<br>");
+    }
+
+    function setProbs(scores) {
+        ["Positive", "Negative", "Neutral"].forEach(function (label) {
+            var prob = scores[label] || 0;
+            var pct  = Math.round(prob * 100);
+            var fill = document.getElementById("fill-" + label);
+            var pctEl = document.getElementById("pct-"  + label);
+            if (fill)  fill.style.width    = pct + "%";
+            if (pctEl) pctEl.textContent   = pct + "%";
+        });
+    }
+
+    /* ── Upload file to Gradio /upload ────────── */
+    function uploadFile(file) {
+        var form = new FormData();
+        form.append("files", file);
+        return fetch(API + "/upload", { method: "POST", body: form })
+            .then(function (res) {
+                if (!res.ok) throw new Error("Error al subir (" + res.status + ")");
+                return res.json();
+            })
+            .then(function (paths) {
+                return {
+                    path:      paths[0],
+                    url:       API + "/file=" + paths[0],
+                    orig_name: file.name,
+                    size:      file.size,
+                    mime_type: file.type || "text/plain",
+                    is_stream: false,
+                    meta:      { _type: "gradio.FileData" }
+                };
+            });
+    }
+
+    /* ── Gradio queue call ────────────────────── */
+    function queueCall(fn_index, data) {
+        var session = Math.random().toString(36).substring(2, 12) + Date.now();
+        return fetch(API + "/queue/join", {
+            method:  "POST",
+            headers: { "Content-Type": "application/json" },
+            body:    JSON.stringify({
+                fn_index:     fn_index,
+                data:         data,
+                session_hash: session,
+                event_data:   null
+            })
+        })
+        .then(function (res) {
+            if (!res.ok) throw new Error("Queue join falló (" + res.status + ")");
+            return new Promise(function (resolve, reject) {
+                var es = new EventSource(API + "/queue/data?session_hash=" + session);
+                var timer = setTimeout(function () {
+                    es.close();
+                    reject(new Error("Timeout: análisis tardó más de 5 minutos"));
+                }, 5 * 60 * 1000);
+
+                es.onmessage = function (e) {
+                    try {
+                        var msg = JSON.parse(e.data);
+                        if (msg.msg === "process_completed") {
+                            clearTimeout(timer);
+                            es.close();
+                            if (msg.output && msg.output.error) reject(new Error(msg.output.error));
+                            else resolve(msg.output.data);
+                        } else if (msg.msg === "queue_full") {
+                            clearTimeout(timer);
+                            es.close();
+                            reject(new Error("Queue llena — intenta de nuevo"));
+                        }
+                    } catch (_) {}
+                };
+
+                es.onerror = function () {
+                    clearTimeout(timer);
+                    es.close();
+                    reject(new Error("Conexión perdida con el servidor"));
+                };
+            });
+        });
+    }
+
+    /* ── Check server connection ──────────────── */
+    function checkConnection() {
+        return fetch(API + "/info")
+            .then(function (res) {
+                if (res.ok) { setBadge("✅ Servidor conectado", "ok"); return true; }
+                throw new Error();
+            })
+            .catch(function () {
+                setBadge("❌ Sin conexión — ejecuta: python app.py", "error");
+                return false;
+            });
+    }
+
+    /* ── Handle uploaded file ─────────────────── */
+    function handleFile(file) {
+        fileInfo.textContent = "⏳ Subiendo " + file.name + "…";
+        previewBox.textContent = "Procesando…";
+        sectionDd.disabled = true;
+        analyzeBtn.disabled = true;
+        resultsDiv.style.display = "none";
+
+        uploadFile(file)
+            .then(function (fileObj) {
+                return queueCall(0, [fileObj]); // fn_index 0 = on_upload
+            })
+            .then(function (data) {
+                // data[0] = full_text state
+                // data[1] = {choices:[...], value:"..."} section dropdown update
+                // data[2] = preview string
+                docState = data[0];
+
+                var raw = data[1];
+                var choices = Array.isArray(raw) ? raw : (raw && raw.choices ? raw.choices : ["Full Document"]);
+
+                sectionDd.innerHTML = "";
+                choices.forEach(function (c) {
+                    var opt = document.createElement("option");
+                    var val = typeof c === "string" ? c : (c.value || c.label || String(c));
+                    opt.value = opt.textContent = val;
+                    sectionDd.appendChild(opt);
+                });
+
+                previewBox.textContent = typeof data[2] === "string" ? data[2] : JSON.stringify(data[2]);
+                fileInfo.textContent = "✅ " + file.name;
+                sectionDd.disabled = false;
+                analyzeBtn.disabled = false;
+            })
+            .catch(function (err) {
+                fileInfo.textContent = "❌ " + err.message;
+                previewBox.textContent = "No se pudo procesar el archivo.";
+            });
+    }
+
+    /* ── Analyze button ───────────────────────── */
+    analyzeBtn.addEventListener("click", function () {
+        if (!docState) return;
+        var section = sectionDd.value;
+        setBtn(true, "Analizando…");
+        setBadge("⏳ Analizando — puede tardar 1–3 min…");
+        resultsDiv.style.display = "none";
+
+        queueCall(1, [docState, section]) // fn_index 1 = on_analyze
+            .then(function (data) {
+                // data[0] = instruct response
+                // data[1] = summary markdown
+                // data[2] = logit scores {Positive, Negative, Neutral}
+                // data[3] = section preview
+                instructDiv.textContent = data[0] || "—";
+                summaryDiv.innerHTML    = renderMd(data[1] || "");
+                setProbs(data[2] || {});
+                previewBox.textContent  = data[3] || "";
+                resultsDiv.style.display = "block";
+                setBadge("✅ Análisis completo", "ok");
+            })
+            .catch(function (err) {
+                setBadge("❌ Error: " + err.message, "error");
+            })
+            .finally(function () {
+                setBtn(false);
+            });
+    });
+
+    /* ── Drag & drop ──────────────────────────── */
+    dropZone.addEventListener("dragover", function (e) {
+        e.preventDefault();
+        dropZone.classList.add("drag");
+    });
+    dropZone.addEventListener("dragleave", function () {
+        dropZone.classList.remove("drag");
+    });
+    dropZone.addEventListener("drop", function (e) {
+        e.preventDefault();
+        dropZone.classList.remove("drag");
+        var f = e.dataTransfer.files[0];
+        if (f) handleFile(f);
+    });
+    fileInput.addEventListener("change", function () {
+        if (fileInput.files[0]) handleFile(fileInput.files[0]);
+    });
+
+    /* ── Init ─────────────────────────────────── */
+    checkConnection();
+}());
+</script>
 </body>
 </html>
