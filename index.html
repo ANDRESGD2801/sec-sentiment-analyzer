@@ -31,107 +31,67 @@
 
         /* Header */
         header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
+            display: flex; align-items: center; gap: 1rem;
             padding: 1rem 2rem;
             background: var(--surface);
             border-bottom: 1px solid var(--border);
         }
         .logo {
-            width: 42px; height: 42px;
-            background: var(--primary);
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 20px; flex-shrink: 0;
+            width: 42px; height: 42px; background: var(--primary);
+            border-radius: 10px; display: flex; align-items: center;
+            justify-content: center; font-size: 20px; flex-shrink: 0;
         }
         .header-text h1 { font-size: 1.1rem; font-weight: 700; }
         .header-text p  { font-size: 0.75rem; color: var(--muted); }
-        .header-right { margin-left: auto; display: flex; align-items: center; gap: .6rem; }
         #conn-badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.72rem;
-            font-weight: 600;
+            margin-left: auto; padding: 4px 12px; border-radius: 20px;
+            font-size: 0.72rem; font-weight: 600; white-space: nowrap;
             background: #1c1c0f; color: var(--amber); border: 1px solid #78350f;
-            white-space: nowrap;
         }
         #conn-badge.ok    { background: #0f2e1a; color: var(--green); border-color: #166534; }
         #conn-badge.error { background: #2e0f0f; color: var(--red);   border-color: #7f1d1d; }
-        #retry-btn {
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.72rem;
-            font-weight: 600;
-            background: transparent;
-            color: var(--muted);
-            border: 1px solid var(--border);
-            cursor: pointer;
-            white-space: nowrap;
-            transition: color .2s, border-color .2s;
-        }
-        #retry-btn:hover { color: var(--text); border-color: var(--primary); }
 
         /* Layout */
         main {
-            flex: 1;
-            display: grid;
-            grid-template-columns: 320px 1fr;
-            gap: 1.25rem;
-            padding: 1.5rem 2rem;
-            max-width: 1300px;
-            width: 100%;
-            margin: 0 auto;
-            align-items: start;
+            flex: 1; display: grid; grid-template-columns: 300px 1fr;
+            gap: 1.25rem; padding: 1.5rem 2rem;
+            max-width: 1300px; width: 100%; margin: 0 auto; align-items: start;
         }
 
         /* Card */
         .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1.25rem;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 1.25rem;
         }
         .card-title {
-            font-size: 0.72rem; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 0.1em;
-            color: var(--muted); margin-bottom: 1rem;
+            font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.1em; color: var(--muted); margin-bottom: 1rem;
         }
 
         /* Drop zone */
         #drop-zone {
-            border: 2px dashed var(--border);
-            border-radius: 10px;
-            padding: 1.75rem 1rem;
-            text-align: center;
-            cursor: pointer;
+            border: 2px dashed var(--border); border-radius: 10px;
+            padding: 1.5rem 1rem; text-align: center; cursor: pointer;
             transition: border-color .2s, background .2s;
             color: var(--muted); font-size: 0.85rem;
         }
         #drop-zone:hover, #drop-zone.drag {
-            border-color: var(--primary);
-            background: rgba(99,102,241,.07);
+            border-color: var(--primary); background: rgba(99,102,241,.07);
         }
-        #drop-zone .icon { font-size: 2rem; display: block; margin-bottom: .5rem; }
-        #drop-zone .hint { font-size: 0.72rem; color: #64748b; margin-top: .25rem; }
+        #drop-zone .icon { font-size: 1.8rem; display: block; margin-bottom: .4rem; }
+        #drop-zone .hint { font-size: 0.7rem; color: #64748b; margin-top: .2rem; }
         #drop-zone input { display: none; }
-        #file-info { margin-top: .6rem; font-size: 0.78rem; min-height: 1.2em; color: var(--green); }
+        #file-info { margin-top: .6rem; font-size: 0.75rem; min-height: 1.2em; color: var(--green); }
 
         /* Select */
-        .field-label { font-size: 0.78rem; color: var(--muted); margin: 1.1rem 0 .4rem; display: block; }
+        .field-label { font-size: 0.75rem; color: var(--muted); margin: 1rem 0 .35rem; display: block; }
         select#section-dd {
-            width: 100%;
-            background: var(--surface2);
-            color: var(--text);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 9px 12px;
-            font-size: 0.85rem;
-            cursor: pointer;
+            width: 100%; background: var(--surface2); color: var(--text);
+            border: 1px solid var(--border); border-radius: 8px;
+            padding: 8px 12px; font-size: 0.85rem; cursor: pointer;
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 10px center;
+            background-repeat: no-repeat; background-position: right 10px center;
         }
         select#section-dd:focus { outline: none; border-color: var(--primary); }
         select#section-dd:disabled { opacity: 0.45; cursor: not-allowed; }
@@ -139,75 +99,93 @@
         /* Button */
         #analyze-btn {
             width: 100%; margin-top: 1rem; padding: 11px;
-            background: var(--primary); color: #fff;
-            border: none; border-radius: 8px;
-            font-size: 0.9rem; font-weight: 600; cursor: pointer;
+            background: var(--primary); color: #fff; border: none;
+            border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: .5rem;
             transition: background .2s, opacity .2s;
         }
         #analyze-btn:hover:not(:disabled) { background: var(--primary-hover); }
         #analyze-btn:disabled { opacity: 0.45; cursor: not-allowed; }
-        .note { font-size: 0.7rem; color: #475569; margin-top: .75rem; line-height: 1.5; }
+        .note { font-size: 0.68rem; color: #475569; margin-top: .7rem; line-height: 1.5; }
 
         /* Spinner */
         .spinner {
             width: 14px; height: 14px;
-            border: 2px solid rgba(255,255,255,.35);
-            border-top-color: #fff;
-            border-radius: 50%;
-            animation: spin .7s linear infinite;
-            flex-shrink: 0;
+            border: 2px solid rgba(255,255,255,.35); border-top-color: #fff;
+            border-radius: 50%; animation: spin .7s linear infinite; flex-shrink: 0;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Preview */
-        #preview-box {
-            background: var(--surface2);
-            border-radius: 8px; padding: 1rem;
-            font-family: "SFMono-Regular", Consolas, monospace;
-            font-size: 0.74rem; line-height: 1.65;
-            color: var(--muted);
-            height: 220px; overflow-y: auto;
-            white-space: pre-wrap; word-break: break-word;
-            margin-bottom: 1.25rem;
+        /* Right panel */
+        #panel-waiting {
+            color: var(--muted); font-size: 0.85rem;
+            padding: 3rem 1rem; text-align: center; line-height: 1.8;
         }
+        #panel-waiting .big { font-size: 3rem; display: block; margin-bottom: .5rem; }
 
-        /* Results */
-        #results { display: none; }
-        #summary {
-            background: rgba(99,102,241,.08);
-            border-left: 3px solid var(--primary);
-            border-radius: 8px; padding: 1rem 1.25rem;
-            font-size: 0.88rem; line-height: 1.6;
-            margin-bottom: 1.25rem;
+        /* Results panel */
+        #panel-results { display: none; }
+
+        /* Sentiment badge (el elemento principal) */
+        .sent-badge {
+            border-radius: 14px; padding: 2rem 1rem;
+            text-align: center; margin-bottom: 1.25rem;
+            border: 2px solid transparent;
         }
-        .results-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.25rem;
+        .sent-badge .sent-label {
+            font-size: 2.5rem; font-weight: 900;
+            text-transform: uppercase; letter-spacing: 0.08em;
+            display: block; margin-bottom: .5rem;
         }
+        .sent-badge .sent-sub {
+            font-size: 0.75rem; color: var(--muted); text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        .badge-Positive { background: rgba(34,197,94,.1);  border-color: var(--green); }
+        .badge-Positive .sent-label { color: var(--green); }
+        .badge-Negative { background: rgba(239,68,68,.1);  border-color: var(--red); }
+        .badge-Negative .sent-label { color: var(--red); }
+        .badge-Neutral  { background: rgba(245,158,11,.1); border-color: var(--amber); }
+        .badge-Neutral  .sent-label { color: var(--amber); }
+        .badge-Unknown  { background: rgba(148,163,184,.1); border-color: var(--muted); }
+        .badge-Unknown  .sent-label { color: var(--muted); }
+
+        /* Reason box */
+        .reason-box {
+            background: var(--surface2); border-radius: 10px;
+            padding: 1rem 1.25rem; margin-bottom: 1.25rem;
+        }
+        .reason-box .reason-title {
+            font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.1em; color: var(--muted); margin-bottom: .5rem;
+        }
+        #reason-text { font-size: 0.9rem; line-height: 1.65; }
+
+        /* Methods row */
+        .methods-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
         .method-card {
-            background: var(--surface2);
-            border: 1px solid var(--border);
+            background: var(--surface2); border: 1px solid var(--border);
             border-radius: 10px; padding: 1rem;
         }
         .method-card h3 {
-            font-size: 0.72rem; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 0.08em;
-            color: var(--muted); margin-bottom: .75rem;
+            font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.08em; color: var(--muted); margin-bottom: .75rem;
         }
-        #instruct-response { font-size: 0.85rem; line-height: 1.7; white-space: pre-wrap; }
+        #instruct-full { font-size: 0.8rem; line-height: 1.65; white-space: pre-wrap; }
 
         /* Probability bars */
-        .prob-item { margin-bottom: .85rem; }
+        .prob-item { margin-bottom: .75rem; }
         .prob-item:last-child { margin-bottom: 0; }
-        .prob-header { display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: .3rem; }
+        .prob-header { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: .25rem; }
         .prob-pct { font-weight: 700; }
-        .prob-track { height: 10px; background: var(--border); border-radius: 99px; overflow: hidden; }
+        .prob-track { height: 9px; background: var(--border); border-radius: 99px; overflow: hidden; }
         .prob-fill { height: 100%; border-radius: 99px; transition: width .5s cubic-bezier(.4,0,.2,1); }
         .fill-Positive { background: var(--green); }
         .fill-Negative { background: var(--red); }
         .fill-Neutral  { background: var(--amber); }
+
+        /* Agreement */
+        #agreement { font-size: 0.78rem; color: var(--muted); margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
 
         /* Scrollbar */
         ::-webkit-scrollbar { width: 5px; }
@@ -221,71 +199,86 @@
     <div class="logo">&#128202;</div>
     <div class="header-text">
         <h1>SEC Sentiment Analyzer</h1>
-        <p>Qwen2-0.5B-Instruct &nbsp;&middot;&nbsp; 100 % local &nbsp;&middot;&nbsp; Dos métodos de análisis</p>
+        <p>Qwen2-0.5B-Instruct &nbsp;&middot;&nbsp; 100% local &nbsp;&middot;&nbsp; Dos m&eacute;todos</p>
     </div>
-    <div class="header-right">
-        <span id="conn-badge">Verificando servidor...</span>
-        <button id="retry-btn" title="Reintentar conexión">Reintentar</button>
-    </div>
+    <span id="conn-badge">Conectando...</span>
 </header>
 
 <main>
-    <!-- Panel izquierdo -->
+    <!-- Panel izquierdo: controles -->
     <div class="card">
-        <p class="card-title">1 &mdash; Archivo SEC</p>
+        <p class="card-title">Archivo SEC</p>
         <div id="drop-zone" role="button" tabindex="0"
              onclick="document.getElementById('file-input').click()"
              onkeydown="if(event.key==='Enter')document.getElementById('file-input').click()">
             <input type="file" id="file-input" accept=".txt,.htm,.html,.pdf" />
             <span class="icon">&#128196;</span>
-            <span>Arrastra o haz clic para subir</span>
-            <span class="hint">TXT &middot; HTM &middot; HTML (recomendado) &middot; PDF</span>
+            <span>Arrastra o haz clic</span>
+            <span class="hint">TXT &middot; HTM &middot; HTML &middot; PDF</span>
         </div>
         <div id="file-info"></div>
 
-        <label class="field-label" for="section-dd">2 &mdash; Sección a analizar</label>
+        <label class="field-label" for="section-dd">Secci&oacute;n a analizar</label>
         <select id="section-dd" disabled>
             <option value="Full Document">Full Document</option>
         </select>
 
         <button id="analyze-btn" disabled>Analizar Sentimiento</button>
         <p class="note">
-            El análisis requiere que <strong>python app.py</strong> esté corriendo.<br>
-            Cargar el archivo y ver secciones funciona sin servidor.
+            Requiere <strong>python app.py</strong> corriendo.<br>
+            El an&aacute;lisis puede tardar 1&ndash;3 minutos la primera vez.
         </p>
     </div>
 
-    <!-- Panel derecho -->
+    <!-- Panel derecho: resultados -->
     <div class="card">
-        <p class="card-title">Vista previa del documento / sección</p>
-        <div id="preview-box">Sube un archivo para ver su contenido aquí.</div>
 
-        <div id="results">
-            <div id="summary"></div>
-            <div class="results-row">
+        <!-- Estado inicial -->
+        <div id="panel-waiting">
+            <span class="big">&#128202;</span>
+            Sube un archivo SEC (.txt, .htm) y presiona<br>
+            <strong>Analizar Sentimiento</strong> para ver el resultado.
+        </div>
+
+        <!-- Resultados -->
+        <div id="panel-results">
+            <!-- Badge principal de sentimiento -->
+            <div class="sent-badge badge-Unknown" id="sent-badge">
+                <span class="sent-label" id="sent-label">--</span>
+                <span class="sent-sub">Sentimiento detectado</span>
+            </div>
+
+            <!-- Razón / explicación -->
+            <div class="reason-box">
+                <div class="reason-title">&#128221; Explicaci&oacute;n</div>
+                <div id="reason-text">--</div>
+            </div>
+
+            <!-- Detalle de ambos métodos -->
+            <div class="methods-row">
                 <div class="method-card">
-                    <h3>Método Instruct</h3>
-                    <div id="instruct-response"></div>
+                    <h3>M&eacute;todo Instruct (respuesta completa)</h3>
+                    <div id="instruct-full"></div>
                 </div>
                 <div class="method-card">
-                    <h3>Método Logit &mdash; probabilidades</h3>
-                    <div>
-                        <div class="prob-item">
-                            <div class="prob-header"><span>Positive</span><span class="prob-pct" id="pct-Positive">--</span></div>
-                            <div class="prob-track"><div class="prob-fill fill-Positive" id="fill-Positive" style="width:0%"></div></div>
-                        </div>
-                        <div class="prob-item">
-                            <div class="prob-header"><span>Negative</span><span class="prob-pct" id="pct-Negative">--</span></div>
-                            <div class="prob-track"><div class="prob-fill fill-Negative" id="fill-Negative" style="width:0%"></div></div>
-                        </div>
-                        <div class="prob-item">
-                            <div class="prob-header"><span>Neutral</span><span class="prob-pct" id="pct-Neutral">--</span></div>
-                            <div class="prob-track"><div class="prob-fill fill-Neutral" id="fill-Neutral" style="width:0%"></div></div>
-                        </div>
+                    <h3>M&eacute;todo Logit &mdash; probabilidades</h3>
+                    <div class="prob-item">
+                        <div class="prob-header"><span>Positive</span><span class="prob-pct" id="pct-Positive">--</span></div>
+                        <div class="prob-track"><div class="prob-fill fill-Positive" id="fill-Positive" style="width:0%"></div></div>
+                    </div>
+                    <div class="prob-item">
+                        <div class="prob-header"><span>Negative</span><span class="prob-pct" id="pct-Negative">--</span></div>
+                        <div class="prob-track"><div class="prob-fill fill-Negative" id="fill-Negative" style="width:0%"></div></div>
+                    </div>
+                    <div class="prob-item">
+                        <div class="prob-header"><span>Neutral</span><span class="prob-pct" id="pct-Neutral">--</span></div>
+                        <div class="prob-track"><div class="prob-fill fill-Neutral" id="fill-Neutral" style="width:0%"></div></div>
                     </div>
                 </div>
             </div>
+            <div id="agreement"></div>
         </div>
+
     </div>
 </main>
 
@@ -293,10 +286,10 @@
 (function () {
     "use strict";
 
-    var API = "http://127.0.0.1:7860";
+    /* /gradio = mismo origen que index.html (servido por app.py) */
+    var API = "/gradio";
 
-    /* ── Sección detection (mismas regex que app.py) ───── */
-    var SECTION_PATTERNS = {
+    var SECTION_PATS = {
         "Item 1 – Business":             /item\s+1[\.\s]+business/i,
         "Item 1A – Risk Factors":        /item\s+1a[\.\s]+risk\s+factor/i,
         "Item 2 – Properties":           /item\s+2[\.\s]+properties/i,
@@ -308,29 +301,31 @@
 
     function detectSections(text) {
         var found = ["Full Document"];
-        for (var name in SECTION_PATTERNS) {
-            if (SECTION_PATTERNS[name].test(text)) found.push(name);
+        for (var name in SECTION_PATS) {
+            if (SECTION_PATS[name].test(text)) found.push(name);
         }
         return found;
     }
 
-    /* ── DOM refs ──────────────────────────────────────── */
-    var badge       = document.getElementById("conn-badge");
-    var retryBtn    = document.getElementById("retry-btn");
-    var fileInput   = document.getElementById("file-input");
-    var fileInfo    = document.getElementById("file-info");
-    var dropZone    = document.getElementById("drop-zone");
-    var sectionDd   = document.getElementById("section-dd");
-    var analyzeBtn  = document.getElementById("analyze-btn");
-    var previewBox  = document.getElementById("preview-box");
-    var resultsDiv  = document.getElementById("results");
-    var summaryDiv  = document.getElementById("summary");
-    var instructDiv = document.getElementById("instruct-response");
+    /* ── DOM ─────────────────────────────────── */
+    var badge        = document.getElementById("conn-badge");
+    var fileInput    = document.getElementById("file-input");
+    var fileInfo     = document.getElementById("file-info");
+    var dropZone     = document.getElementById("drop-zone");
+    var sectionDd    = document.getElementById("section-dd");
+    var analyzeBtn   = document.getElementById("analyze-btn");
+    var panelWaiting = document.getElementById("panel-waiting");
+    var panelResults = document.getElementById("panel-results");
+    var sentBadge    = document.getElementById("sent-badge");
+    var sentLabel    = document.getElementById("sent-label");
+    var reasonText   = document.getElementById("reason-text");
+    var instructFull = document.getElementById("instruct-full");
+    var agreementDiv = document.getElementById("agreement");
 
-    var docState    = "";   // full text of the document
-    var serverOk    = false;
+    var docState = "";
+    var serverOk = false;
 
-    /* ── Helpers ─────────────────────────────────────── */
+    /* ── Helpers ─────────────────────────────── */
     function setBadge(text, cls) {
         badge.textContent = text;
         badge.className   = cls || "";
@@ -339,47 +334,57 @@
     function setBtn(loading, label) {
         label = label || "Analizar Sentimiento";
         analyzeBtn.disabled = loading || !docState || !serverOk;
-        if (loading) {
-            analyzeBtn.innerHTML = '<span class="spinner"></span>' + label;
+        analyzeBtn.innerHTML = loading
+            ? '<span class="spinner"></span>' + label
+            : label;
+    }
+
+    function setProbs(raw) {
+        var scores = {};
+        if (raw && raw.confidences) {
+            raw.confidences.forEach(function (c) { scores[c.label] = c.confidence; });
         } else {
-            analyzeBtn.textContent = label;
+            scores = raw || {};
         }
-    }
-
-    function renderMd(text) {
-        return String(text)
-            .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-            .replace(/\*(.*?)\*/g, "<em>$1</em>")
-            .replace(/\n/g, "<br>");
-    }
-
-    function setProbs(scores) {
-        ["Positive", "Negative", "Neutral"].forEach(function (label) {
-            var prob  = (scores && scores[label]) ? scores[label] : 0;
-            var pct   = Math.round(prob * 100);
-            var fill  = document.getElementById("fill-" + label);
-            var pctEl = document.getElementById("pct-"  + label);
+        ["Positive", "Negative", "Neutral"].forEach(function (l) {
+            var pct   = Math.round((scores[l] || 0) * 100);
+            var fill  = document.getElementById("fill-" + l);
+            var pctEl = document.getElementById("pct-"  + l);
             if (fill)  fill.style.width  = pct + "%";
             if (pctEl) pctEl.textContent = pct + "%";
         });
     }
 
-    function populateSections(choices) {
-        sectionDd.innerHTML = "";
-        choices.forEach(function (c) {
-            var opt = document.createElement("option");
-            opt.value = opt.textContent = c;
-            sectionDd.appendChild(opt);
+    function showSentiment(label, reason, instFull, logitScores) {
+        /* Normaliza la etiqueta */
+        var knownLabels = ["Positive", "Negative", "Neutral"];
+        var normalized  = "Unknown";
+        knownLabels.forEach(function (l) {
+            if (label && label.toLowerCase() === l.toLowerCase()) normalized = l;
         });
-        sectionDd.disabled = false;
+
+        /* Badge */
+        sentBadge.className = "sent-badge badge-" + normalized;
+        sentLabel.textContent = normalized === "Unknown" ? "?" : normalized.toUpperCase();
+
+        /* Razón */
+        reasonText.textContent = reason || "El modelo no proporcionó una explicación.";
+
+        /* Respuesta completa del modo Instruct */
+        instructFull.textContent = instFull || "--";
+
+        /* Barras de probabilidad */
+        setProbs(logitScores);
+
+        panelWaiting.style.display = "none";
+        panelResults.style.display = "block";
     }
 
-    /* ── Check Gradio server connection ──────────────── */
+    /* ── Connection check ────────────────────── */
     function checkConnection() {
-        setBadge("Verificando servidor...");
-        return fetch(API + "/info", { signal: AbortSignal.timeout(3000) })
+        return fetch(API + "/info")
             .then(function (r) {
-                if (!r.ok) throw new Error("not ok");
+                if (!r.ok) throw new Error();
                 serverOk = true;
                 setBadge("Servidor conectado", "ok");
                 if (docState) analyzeBtn.disabled = false;
@@ -391,126 +396,118 @@
             });
     }
 
-    retryBtn.addEventListener("click", checkConnection);
-
-    /* ── Read file locally with FileReader ───────────── */
+    /* ── File reading (local, sin servidor) ─── */
     function handleFile(file) {
         var ext = file.name.split(".").pop().toLowerCase();
-
         if (ext === "pdf") {
-            fileInfo.textContent = "PDF detectado. Sube el archivo a la interfaz Gradio en http://127.0.0.1:7860";
+            fileInfo.textContent = "PDF: sube el archivo en http://127.0.0.1:7860/gradio";
             fileInfo.style.color = "var(--amber)";
             return;
         }
-
         fileInfo.style.color = "var(--green)";
         fileInfo.textContent = "Leyendo " + file.name + "...";
-        previewBox.textContent = "Cargando...";
-        sectionDd.disabled = true;
+        sectionDd.disabled  = true;
         analyzeBtn.disabled = true;
-        resultsDiv.style.display = "none";
 
         var reader = new FileReader();
-
         reader.onload = function (e) {
             docState = e.target.result;
-
             if (!docState || !docState.trim()) {
-                fileInfo.textContent = "El archivo parece estar vacio.";
-                fileInfo.style.color = "var(--red)";
+                fileInfo.textContent = "Archivo vacío.";
                 return;
             }
-
             var sections = detectSections(docState);
-            populateSections(sections);
-
-            var preview = docState.length > 3000
-                ? docState.substring(0, 3000) + "\n\n[... archivo truncado para vista previa ...]"
-                : docState;
-            previewBox.textContent = preview;
-
-            fileInfo.textContent = file.name + "  |  " + Math.round(docState.length / 1024) + " KB  |  "
+            sectionDd.innerHTML = "";
+            sections.forEach(function (c) {
+                var o = document.createElement("option");
+                o.value = o.textContent = c;
+                sectionDd.appendChild(o);
+            });
+            sectionDd.disabled  = false;
+            fileInfo.textContent = file.name + "  |  "
+                + Math.round(docState.length / 1024) + " KB  |  "
                 + docState.trim().split(/\s+/).length.toLocaleString() + " palabras";
-
             if (serverOk) analyzeBtn.disabled = false;
         };
-
         reader.onerror = function () {
-            fileInfo.textContent = "Error al leer el archivo.";
+            fileInfo.textContent = "Error al leer.";
             fileInfo.style.color = "var(--red)";
         };
-
         reader.readAsText(file, "UTF-8");
     }
 
-    /* ── Gradio queue call (only for analysis) ────────── */
+    /* ── Gradio queue call ───────────────────── */
     function queueCall(fn_index, data) {
         var session = Math.random().toString(36).substring(2, 12) + Date.now();
         return fetch(API + "/queue/join", {
-            method:  "POST",
+            method: "POST",
             headers: { "Content-Type": "application/json" },
-            body:    JSON.stringify({
-                fn_index:     fn_index,
-                data:         data,
-                session_hash: session,
-                event_data:   null
-            })
+            body: JSON.stringify({ fn_index: fn_index, data: data, session_hash: session, event_data: null })
         })
         .then(function (res) {
-            if (!res.ok) throw new Error("Queue join fallo (" + res.status + "). Verifica que python app.py este corriendo.");
+            if (!res.ok) throw new Error("Queue join fallo (" + res.status + ")");
             return new Promise(function (resolve, reject) {
                 var es    = new EventSource(API + "/queue/data?session_hash=" + session);
-                var timer = setTimeout(function () {
-                    es.close();
-                    reject(new Error("Timeout: el analisis tardo mas de 5 minutos"));
-                }, 5 * 60 * 1000);
-
+                var timer = setTimeout(function () { es.close(); reject(new Error("Timeout 5 min")); }, 5 * 60 * 1000);
                 es.onmessage = function (e) {
                     try {
                         var msg = JSON.parse(e.data);
                         if (msg.msg === "process_completed") {
-                            clearTimeout(timer);
-                            es.close();
+                            clearTimeout(timer); es.close();
                             if (msg.output && msg.output.error) reject(new Error(msg.output.error));
                             else resolve(msg.output.data);
                         } else if (msg.msg === "queue_full") {
-                            clearTimeout(timer);
-                            es.close();
+                            clearTimeout(timer); es.close();
                             reject(new Error("Queue llena, intenta de nuevo"));
                         }
                     } catch (_) {}
                 };
-
-                es.onerror = function () {
-                    clearTimeout(timer);
-                    es.close();
-                    reject(new Error("Conexion perdida con el servidor"));
-                };
+                es.onerror = function () { clearTimeout(timer); es.close(); reject(new Error("Conexion perdida")); };
             });
         });
     }
 
-    /* ── Analyze button ───────────────────────────────── */
+    /* ── Analyze click ───────────────────────── */
     analyzeBtn.addEventListener("click", function () {
         if (!docState || !serverOk) return;
         var section = sectionDd.value;
 
         setBtn(true, "Analizando...");
-        setBadge("Analizando — puede tardar 1-3 min...");
-        resultsDiv.style.display = "none";
+        setBadge("Analizando — puede tardar 1–3 min...");
 
-        // fn_index 1 = on_analyze(full_text, section_name)
+        /* fn_index 1 = on_analyze(full_text, section_name) */
         queueCall(1, [docState, section])
             .then(function (data) {
-                // data[0] = instruct response string
-                // data[1] = summary markdown string
-                // data[2] = logit scores {Positive, Negative, Neutral}
-                // data[3] = section preview string
-                instructDiv.textContent = data[0] || "--";
-                summaryDiv.innerHTML    = renderMd(data[1] || "");
-                setProbs(data[2] || {});
-                previewBox.textContent  = data[3] || "";
-                resultsDiv.style.display = "block";
+                /*
+                 * data[0] = respuesta instruct ("Sentiment: X\nReason: ...")
+                 * data[1] = summary markdown
+                 * data[2] = logit scores {Positive, Negative, Neutral}  o  Label format
+                 * data[3] = preview de sección (no lo usamos aquí)
+                 */
+                var instText   = String(data[0] || "");
+                var sentMatch  = instText.match(/Sentiment:\s*(Positive|Negative|Neutral)/i);
+                var reasonMatch = instText.match(/Reason:\s*([\s\S]+)/i);
+                var instLabel  = sentMatch  ? sentMatch[1]  : "Unknown";
+                var reason     = reasonMatch ? reasonMatch[1].trim() : instText;
+
+                /* Si instruct no encontró etiqueta, usa logit */
+                if (instLabel === "Unknown" && data[2]) {
+                    var sc = data[2].confidences
+                        ? data[2]
+                        : { confidences: Object.keys(data[2]).map(function (k) { return { label: k, confidence: data[2][k] }; }) };
+                    if (sc.confidences && sc.confidences.length) {
+                        sc.confidences.sort(function (a, b) { return b.confidence - a.confidence; });
+                        instLabel = sc.confidences[0].label;
+                    }
+                }
+
+                /* Acuerdo entre métodos */
+                var summaryText = String(data[1] || "");
+                agreementDiv.textContent = summaryText
+                    .replace(/\*\*/g, "")
+                    .replace(/\*/g, "");
+
+                showSentiment(instLabel, reason, instText, data[2]);
                 setBadge("Analisis completo", "ok");
             })
             .catch(function (err) {
@@ -521,17 +518,11 @@
             });
     });
 
-    /* ── Drag & drop ──────────────────────────────────── */
-    dropZone.addEventListener("dragover", function (e) {
-        e.preventDefault();
-        dropZone.classList.add("drag");
-    });
-    dropZone.addEventListener("dragleave", function () {
-        dropZone.classList.remove("drag");
-    });
+    /* ── Drag & drop ─────────────────────────── */
+    dropZone.addEventListener("dragover",  function (e) { e.preventDefault(); dropZone.classList.add("drag"); });
+    dropZone.addEventListener("dragleave", function ()  { dropZone.classList.remove("drag"); });
     dropZone.addEventListener("drop", function (e) {
-        e.preventDefault();
-        dropZone.classList.remove("drag");
+        e.preventDefault(); dropZone.classList.remove("drag");
         var f = e.dataTransfer.files[0];
         if (f) handleFile(f);
     });
@@ -539,8 +530,9 @@
         if (fileInput.files[0]) handleFile(fileInput.files[0]);
     });
 
-    /* ── Init ─────────────────────────────────────────── */
+    /* ── Init ────────────────────────────────── */
     checkConnection();
+    setInterval(function () { if (!serverOk) checkConnection(); }, 5000);
 }());
 </script>
 </body>
