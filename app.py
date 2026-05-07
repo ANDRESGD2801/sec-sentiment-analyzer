@@ -336,5 +336,6 @@ with gr.Blocks(title="SEC Sentiment Analyzer", theme=gr.themes.Soft()) as demo:
 
 
 if __name__ == "__main__":
-    load_model()          # pre-carga el modelo al arrancar
+    load_model()
+    demo.queue()          # habilita queue (necesario para llamadas desde el HTML)
     demo.launch()
