@@ -47,8 +47,8 @@
         }
         .header-text h1 { font-size: 1.1rem; font-weight: 700; }
         .header-text p  { font-size: 0.75rem; color: var(--muted); }
+        .header-right { margin-left: auto; display: flex; align-items: center; gap: .6rem; }
         #conn-badge {
-            margin-left: auto;
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 0.72rem;
@@ -58,6 +58,19 @@
         }
         #conn-badge.ok    { background: #0f2e1a; color: var(--green); border-color: #166534; }
         #conn-badge.error { background: #2e0f0f; color: var(--red);   border-color: #7f1d1d; }
+        #retry-btn {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: color .2s, border-color .2s;
+        }
+        #retry-btn:hover { color: var(--text); border-color: var(--primary); }
 
         /* Layout */
         main {
@@ -205,37 +218,40 @@
 <body>
 
 <header>
-    <div class="logo">📊</div>
+    <div class="logo">&#128202;</div>
     <div class="header-text">
         <h1>SEC Sentiment Analyzer</h1>
-        <p>Qwen2-0.5B-Instruct &nbsp;·&nbsp; 100 % local &nbsp;·&nbsp; Dos métodos de análisis</p>
+        <p>Qwen2-0.5B-Instruct &nbsp;&middot;&nbsp; 100 % local &nbsp;&middot;&nbsp; Dos métodos de análisis</p>
     </div>
-    <span id="conn-badge">Conectando…</span>
+    <div class="header-right">
+        <span id="conn-badge">Verificando servidor...</span>
+        <button id="retry-btn" title="Reintentar conexión">Reintentar</button>
+    </div>
 </header>
 
 <main>
     <!-- Panel izquierdo -->
     <div class="card">
-        <p class="card-title">1 — Archivo SEC</p>
+        <p class="card-title">1 &mdash; Archivo SEC</p>
         <div id="drop-zone" role="button" tabindex="0"
              onclick="document.getElementById('file-input').click()"
              onkeydown="if(event.key==='Enter')document.getElementById('file-input').click()">
-            <input type="file" id="file-input" accept=".pdf,.txt,.htm,.html" />
-            <span class="icon">📄</span>
+            <input type="file" id="file-input" accept=".txt,.htm,.html,.pdf" />
+            <span class="icon">&#128196;</span>
             <span>Arrastra o haz clic para subir</span>
-            <span class="hint">PDF · TXT · HTM · HTML</span>
+            <span class="hint">TXT &middot; HTM &middot; HTML (recomendado) &middot; PDF</span>
         </div>
         <div id="file-info"></div>
 
-        <label class="field-label" for="section-dd">2 — Sección a analizar</label>
+        <label class="field-label" for="section-dd">2 &mdash; Sección a analizar</label>
         <select id="section-dd" disabled>
             <option value="Full Document">Full Document</option>
         </select>
 
         <button id="analyze-btn" disabled>Analizar Sentimiento</button>
         <p class="note">
-            ℹ️ Primera ejecución descarga ~1 GB del modelo (solo una vez).<br>
-            El análisis puede tardar 1–3 minutos.
+            El análisis requiere que <strong>python app.py</strong> esté corriendo.<br>
+            Cargar el archivo y ver secciones funciona sin servidor.
         </p>
     </div>
 
@@ -252,18 +268,18 @@
                     <div id="instruct-response"></div>
                 </div>
                 <div class="method-card">
-                    <h3>Método Logit — probabilidades</h3>
+                    <h3>Método Logit &mdash; probabilidades</h3>
                     <div>
                         <div class="prob-item">
-                            <div class="prob-header"><span>Positive</span><span class="prob-pct" id="pct-Positive">—</span></div>
+                            <div class="prob-header"><span>Positive</span><span class="prob-pct" id="pct-Positive">--</span></div>
                             <div class="prob-track"><div class="prob-fill fill-Positive" id="fill-Positive" style="width:0%"></div></div>
                         </div>
                         <div class="prob-item">
-                            <div class="prob-header"><span>Negative</span><span class="prob-pct" id="pct-Negative">—</span></div>
+                            <div class="prob-header"><span>Negative</span><span class="prob-pct" id="pct-Negative">--</span></div>
                             <div class="prob-track"><div class="prob-fill fill-Negative" id="fill-Negative" style="width:0%"></div></div>
                         </div>
                         <div class="prob-item">
-                            <div class="prob-header"><span>Neutral</span><span class="prob-pct" id="pct-Neutral">—</span></div>
+                            <div class="prob-header"><span>Neutral</span><span class="prob-pct" id="pct-Neutral">--</span></div>
                             <div class="prob-track"><div class="prob-fill fill-Neutral" id="fill-Neutral" style="width:0%"></div></div>
                         </div>
                     </div>
@@ -279,7 +295,28 @@
 
     var API = "http://127.0.0.1:7860";
 
+    /* ── Sección detection (mismas regex que app.py) ───── */
+    var SECTION_PATTERNS = {
+        "Item 1 – Business":             /item\s+1[\.\s]+business/i,
+        "Item 1A – Risk Factors":        /item\s+1a[\.\s]+risk\s+factor/i,
+        "Item 2 – Properties":           /item\s+2[\.\s]+properties/i,
+        "Item 3 – Legal Proceedings":    /item\s+3[\.\s]+legal\s+proceedings/i,
+        "Item 7 – MD&A":                 /item\s+7[\.\s]+management/i,
+        "Item 7A – Market Risk":         /item\s+7a[\.\s]+quantitative/i,
+        "Item 8 – Financial Statements": /item\s+8[\.\s]+financial/i,
+    };
+
+    function detectSections(text) {
+        var found = ["Full Document"];
+        for (var name in SECTION_PATTERNS) {
+            if (SECTION_PATTERNS[name].test(text)) found.push(name);
+        }
+        return found;
+    }
+
+    /* ── DOM refs ──────────────────────────────────────── */
     var badge       = document.getElementById("conn-badge");
+    var retryBtn    = document.getElementById("retry-btn");
     var fileInput   = document.getElementById("file-input");
     var fileInfo    = document.getElementById("file-info");
     var dropZone    = document.getElementById("drop-zone");
@@ -290,17 +327,18 @@
     var summaryDiv  = document.getElementById("summary");
     var instructDiv = document.getElementById("instruct-response");
 
-    var docState = "";
+    var docState    = "";   // full text of the document
+    var serverOk    = false;
 
-    /* ── Helpers ─────────────────────────────── */
+    /* ── Helpers ─────────────────────────────────────── */
     function setBadge(text, cls) {
         badge.textContent = text;
-        badge.className = cls || "";
+        badge.className   = cls || "";
     }
 
     function setBtn(loading, label) {
         label = label || "Analizar Sentimiento";
-        analyzeBtn.disabled = loading;
+        analyzeBtn.disabled = loading || !docState || !serverOk;
         if (loading) {
             analyzeBtn.innerHTML = '<span class="spinner"></span>' + label;
         } else {
@@ -309,7 +347,7 @@
     }
 
     function renderMd(text) {
-        return text
+        return String(text)
             .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
             .replace(/\*(.*?)\*/g, "<em>$1</em>")
             .replace(/\n/g, "<br>");
@@ -317,38 +355,95 @@
 
     function setProbs(scores) {
         ["Positive", "Negative", "Neutral"].forEach(function (label) {
-            var prob = scores[label] || 0;
-            var pct  = Math.round(prob * 100);
-            var fill = document.getElementById("fill-" + label);
+            var prob  = (scores && scores[label]) ? scores[label] : 0;
+            var pct   = Math.round(prob * 100);
+            var fill  = document.getElementById("fill-" + label);
             var pctEl = document.getElementById("pct-"  + label);
-            if (fill)  fill.style.width    = pct + "%";
-            if (pctEl) pctEl.textContent   = pct + "%";
+            if (fill)  fill.style.width  = pct + "%";
+            if (pctEl) pctEl.textContent = pct + "%";
         });
     }
 
-    /* ── Upload file to Gradio /upload ────────── */
-    function uploadFile(file) {
-        var form = new FormData();
-        form.append("files", file);
-        return fetch(API + "/upload", { method: "POST", body: form })
-            .then(function (res) {
-                if (!res.ok) throw new Error("Error al subir (" + res.status + ")");
-                return res.json();
+    function populateSections(choices) {
+        sectionDd.innerHTML = "";
+        choices.forEach(function (c) {
+            var opt = document.createElement("option");
+            opt.value = opt.textContent = c;
+            sectionDd.appendChild(opt);
+        });
+        sectionDd.disabled = false;
+    }
+
+    /* ── Check Gradio server connection ──────────────── */
+    function checkConnection() {
+        setBadge("Verificando servidor...");
+        return fetch(API + "/info", { signal: AbortSignal.timeout(3000) })
+            .then(function (r) {
+                if (!r.ok) throw new Error("not ok");
+                serverOk = true;
+                setBadge("Servidor conectado", "ok");
+                if (docState) analyzeBtn.disabled = false;
             })
-            .then(function (paths) {
-                return {
-                    path:      paths[0],
-                    url:       API + "/file=" + paths[0],
-                    orig_name: file.name,
-                    size:      file.size,
-                    mime_type: file.type || "text/plain",
-                    is_stream: false,
-                    meta:      { _type: "gradio.FileData" }
-                };
+            .catch(function () {
+                serverOk = false;
+                setBadge("Sin conexion — ejecuta: python app.py", "error");
+                analyzeBtn.disabled = true;
             });
     }
 
-    /* ── Gradio queue call ────────────────────── */
+    retryBtn.addEventListener("click", checkConnection);
+
+    /* ── Read file locally with FileReader ───────────── */
+    function handleFile(file) {
+        var ext = file.name.split(".").pop().toLowerCase();
+
+        if (ext === "pdf") {
+            fileInfo.textContent = "PDF detectado. Sube el archivo a la interfaz Gradio en http://127.0.0.1:7860";
+            fileInfo.style.color = "var(--amber)";
+            return;
+        }
+
+        fileInfo.style.color = "var(--green)";
+        fileInfo.textContent = "Leyendo " + file.name + "...";
+        previewBox.textContent = "Cargando...";
+        sectionDd.disabled = true;
+        analyzeBtn.disabled = true;
+        resultsDiv.style.display = "none";
+
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            docState = e.target.result;
+
+            if (!docState || !docState.trim()) {
+                fileInfo.textContent = "El archivo parece estar vacio.";
+                fileInfo.style.color = "var(--red)";
+                return;
+            }
+
+            var sections = detectSections(docState);
+            populateSections(sections);
+
+            var preview = docState.length > 3000
+                ? docState.substring(0, 3000) + "\n\n[... archivo truncado para vista previa ...]"
+                : docState;
+            previewBox.textContent = preview;
+
+            fileInfo.textContent = file.name + "  |  " + Math.round(docState.length / 1024) + " KB  |  "
+                + docState.trim().split(/\s+/).length.toLocaleString() + " palabras";
+
+            if (serverOk) analyzeBtn.disabled = false;
+        };
+
+        reader.onerror = function () {
+            fileInfo.textContent = "Error al leer el archivo.";
+            fileInfo.style.color = "var(--red)";
+        };
+
+        reader.readAsText(file, "UTF-8");
+    }
+
+    /* ── Gradio queue call (only for analysis) ────────── */
     function queueCall(fn_index, data) {
         var session = Math.random().toString(36).substring(2, 12) + Date.now();
         return fetch(API + "/queue/join", {
@@ -362,12 +457,12 @@
             })
         })
         .then(function (res) {
-            if (!res.ok) throw new Error("Queue join falló (" + res.status + ")");
+            if (!res.ok) throw new Error("Queue join fallo (" + res.status + "). Verifica que python app.py este corriendo.");
             return new Promise(function (resolve, reject) {
-                var es = new EventSource(API + "/queue/data?session_hash=" + session);
+                var es    = new EventSource(API + "/queue/data?session_hash=" + session);
                 var timer = setTimeout(function () {
                     es.close();
-                    reject(new Error("Timeout: análisis tardó más de 5 minutos"));
+                    reject(new Error("Timeout: el analisis tardo mas de 5 minutos"));
                 }, 5 * 60 * 1000);
 
                 es.onmessage = function (e) {
@@ -381,7 +476,7 @@
                         } else if (msg.msg === "queue_full") {
                             clearTimeout(timer);
                             es.close();
-                            reject(new Error("Queue llena — intenta de nuevo"));
+                            reject(new Error("Queue llena, intenta de nuevo"));
                         }
                     } catch (_) {}
                 };
@@ -389,95 +484,44 @@
                 es.onerror = function () {
                     clearTimeout(timer);
                     es.close();
-                    reject(new Error("Conexión perdida con el servidor"));
+                    reject(new Error("Conexion perdida con el servidor"));
                 };
             });
         });
     }
 
-    /* ── Check server connection ──────────────── */
-    function checkConnection() {
-        return fetch(API + "/info")
-            .then(function (res) {
-                if (res.ok) { setBadge("✅ Servidor conectado", "ok"); return true; }
-                throw new Error();
-            })
-            .catch(function () {
-                setBadge("❌ Sin conexión — ejecuta: python app.py", "error");
-                return false;
-            });
-    }
-
-    /* ── Handle uploaded file ─────────────────── */
-    function handleFile(file) {
-        fileInfo.textContent = "⏳ Subiendo " + file.name + "…";
-        previewBox.textContent = "Procesando…";
-        sectionDd.disabled = true;
-        analyzeBtn.disabled = true;
-        resultsDiv.style.display = "none";
-
-        uploadFile(file)
-            .then(function (fileObj) {
-                return queueCall(0, [fileObj]); // fn_index 0 = on_upload
-            })
-            .then(function (data) {
-                // data[0] = full_text state
-                // data[1] = {choices:[...], value:"..."} section dropdown update
-                // data[2] = preview string
-                docState = data[0];
-
-                var raw = data[1];
-                var choices = Array.isArray(raw) ? raw : (raw && raw.choices ? raw.choices : ["Full Document"]);
-
-                sectionDd.innerHTML = "";
-                choices.forEach(function (c) {
-                    var opt = document.createElement("option");
-                    var val = typeof c === "string" ? c : (c.value || c.label || String(c));
-                    opt.value = opt.textContent = val;
-                    sectionDd.appendChild(opt);
-                });
-
-                previewBox.textContent = typeof data[2] === "string" ? data[2] : JSON.stringify(data[2]);
-                fileInfo.textContent = "✅ " + file.name;
-                sectionDd.disabled = false;
-                analyzeBtn.disabled = false;
-            })
-            .catch(function (err) {
-                fileInfo.textContent = "❌ " + err.message;
-                previewBox.textContent = "No se pudo procesar el archivo.";
-            });
-    }
-
-    /* ── Analyze button ───────────────────────── */
+    /* ── Analyze button ───────────────────────────────── */
     analyzeBtn.addEventListener("click", function () {
-        if (!docState) return;
+        if (!docState || !serverOk) return;
         var section = sectionDd.value;
-        setBtn(true, "Analizando…");
-        setBadge("⏳ Analizando — puede tardar 1–3 min…");
+
+        setBtn(true, "Analizando...");
+        setBadge("Analizando — puede tardar 1-3 min...");
         resultsDiv.style.display = "none";
 
-        queueCall(1, [docState, section]) // fn_index 1 = on_analyze
+        // fn_index 1 = on_analyze(full_text, section_name)
+        queueCall(1, [docState, section])
             .then(function (data) {
-                // data[0] = instruct response
-                // data[1] = summary markdown
+                // data[0] = instruct response string
+                // data[1] = summary markdown string
                 // data[2] = logit scores {Positive, Negative, Neutral}
-                // data[3] = section preview
-                instructDiv.textContent = data[0] || "—";
+                // data[3] = section preview string
+                instructDiv.textContent = data[0] || "--";
                 summaryDiv.innerHTML    = renderMd(data[1] || "");
                 setProbs(data[2] || {});
                 previewBox.textContent  = data[3] || "";
                 resultsDiv.style.display = "block";
-                setBadge("✅ Análisis completo", "ok");
+                setBadge("Analisis completo", "ok");
             })
             .catch(function (err) {
-                setBadge("❌ Error: " + err.message, "error");
+                setBadge("Error: " + err.message, "error");
             })
             .finally(function () {
                 setBtn(false);
             });
     });
 
-    /* ── Drag & drop ──────────────────────────── */
+    /* ── Drag & drop ──────────────────────────────────── */
     dropZone.addEventListener("dragover", function (e) {
         e.preventDefault();
         dropZone.classList.add("drag");
@@ -495,7 +539,7 @@
         if (fileInput.files[0]) handleFile(fileInput.files[0]);
     });
 
-    /* ── Init ─────────────────────────────────── */
+    /* ── Init ─────────────────────────────────────────── */
     checkConnection();
 }());
 </script>
