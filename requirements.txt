@@ -3,3 +3,4 @@ transformers>=4.40
 torch>=2.1
 pymupdf>=1.23
 accelerate>=0.27
+uvicorn>=0.27
